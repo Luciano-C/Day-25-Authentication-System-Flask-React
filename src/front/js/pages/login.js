@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
+import { Link, useParams } from "react-router-dom";
 
-export const Home = () => {
+export const Login = () => {
   const { store, actions } = useContext(Context);
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
 
   return (
     <div className="text-center mt-5 d-flex justify-content-center">
@@ -12,42 +15,36 @@ export const Home = () => {
         <div className="col-8">
           <form>
             <div className="mb-3">
-              <label for="exampleInputEmail1" className="form-label">
-                Email address
-              </label>
+              <label className="form-label">Email address</label>
               <input
                 type="email"
                 className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
+                onChange={(e) => setEmailInput(e.target.value)}
               />
-              {/*     <div id="emailHelp" className="form-text">
-                We'll never share your email with anyone else.
-              </div> */}
             </div>
             <div className="mb-3">
-              <label for="exampleInputPassword1" className="form-label">
-                Password
-              </label>
+              <label className="form-label">Password</label>
               <input
                 type="password"
                 className="form-control"
                 id="exampleInputPassword1"
+                onChange={(e) => setPasswordInput(e.target.value)}
               />
             </div>
-            {/*         <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="exampleCheck1"
-              />
-              <label className="form-check-label" for="exampleCheck1">
-                Check me out
-              </label>
-            </div> */}
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
+
+            <Link to="/privateProfile">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={() => {
+                  actions.loginHandler(emailInput, passwordInput);
+                }}
+              >
+                Log In
+              </button>
+            </Link>
           </form>
         </div>
       </div>
