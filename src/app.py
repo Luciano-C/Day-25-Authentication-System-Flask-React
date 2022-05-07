@@ -7,17 +7,24 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+import datetime
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 #from models import Person
 
 ENV = os.getenv("FLASK_ENV")
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+# Instancia jwt
+jwt = JWTManager(app)
+
+
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -63,6 +70,41 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0 # avoid cache memory
     return response
 
+
+
+@app.route('/registro', methods=['POST'])
+def registrar_usuario():
+    data = request.get_json()
+    
+    new_user = User()
+    new_user.email = data["email"]
+    new_user.password = data["password"]
+    new_user.is_active = data["is_active"] 
+
+    db.session.add(new_user)
+    db.session.commit()
+    return "el registro se realizó satisfactoriamente"
+
+@app.route('/login', methods=['POST'])
+def iniciar_sesion():
+    data = request.get_json()
+    one_user = User.query.filter_by(email=data['email'], password=data['password']).first()
+    if one_user:
+        expiracion = datetime.timedelta(minutes=1)
+        acceso = create_access_token(identity=one_user.email, expires_delta=expiracion)
+        response = {"Token": acceso, "expiracion": expiracion.total_seconds(), "email": one_user.email}
+        return jsonify(response)
+    else:
+        return "mail o contraseña inválidos"
+
+@app.route('/privada', methods=['GET'])
+@jwt_required()
+def acceso_privado():
+    token = get_jwt_identity()
+    return jsonify({
+        "mensaje": "Acceso a espacio privado concedido",
+        "usuario": token
+    })
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
