@@ -89,13 +89,14 @@ def registrar_usuario():
 def iniciar_sesion():
     data = request.get_json()
     one_user = User.query.filter_by(email=data['email'], password=data['password']).first()
+    print(one_user)
     if one_user:
         expiracion = datetime.timedelta(minutes=1)
         acceso = create_access_token(identity=one_user.email, expires_delta=expiracion)
-        response = {"Token": acceso, "expiracion": expiracion.total_seconds(), "email": one_user.email}
+        response = {"token": acceso, "expiracion": expiracion.total_seconds(), "email": one_user.email}
         return jsonify(response)
     else:
-        return "mail o contraseña inválidos"
+        return {"mensaje":"mail o contraseña inválidos"}
 
 @app.route('/privada', methods=['GET'])
 @jwt_required()

@@ -1,28 +1,40 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-        },
-      ],
-
       currentEmail: "",
       currentPassword: "",
+      token: "",
     },
     actions: {
       // Use getActions to call a function within a fuction
       loginHandler: (newEmail, newPassword) => {
         setStore({ currentEmail: newEmail });
         setStore({ currentPassword: newPassword });
+        let store = getStore();
+        console.log(store, "holahola");
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+          email: store.currentEmail,
+          password: store.currentPassword,
+        });
+
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+
+        fetch(process.env.BACKEND_URL + "/login", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            setStore({ token: result.token });
+            console.log(store);
+          })
+          .catch((error) => console.log(error));
       },
 
       getMessage: () => {
