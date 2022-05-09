@@ -4,6 +4,11 @@ import { Context } from "../store/appContext";
 export const PrivateProfile = () => {
   const { store, actions } = useContext(Context);
 
+  useEffect(() => {
+    actions.getUserData();
+    console.log(store, "hola hola");
+  }, [store.isActive]);
+
   return (
     <div className="d-flex justify-content-center">
       <div className="card mb-3">
@@ -20,7 +25,8 @@ export const PrivateProfile = () => {
               <h5 className="card-title">Data</h5>
               <p className="card-text">
                 Your Email is: {store.currentEmail} <br />
-                Your Password is: {store.currentPassword}
+                Your Password is: {store.currentPassword} <br />
+                Active: {store.isActive.toString()}
               </p>
 
               <p className="card-text">

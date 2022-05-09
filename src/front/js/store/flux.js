@@ -3,6 +3,7 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       currentEmail: "",
       currentPassword: "",
+      isActive: "",
       token: "",
     },
     actions: {
@@ -11,7 +12,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentEmail: newEmail });
         setStore({ currentPassword: newPassword });
         let store = getStore();
-        console.log(store, "holahola");
 
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -35,6 +35,25 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.log(store);
           })
           .catch((error) => console.log(error));
+      },
+
+      getUserData: () => {
+        const store = getStore();
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${store.token}`);
+
+        var requestOptions = {
+          method: "GET",
+          headers: myHeaders,
+          redirect: "follow",
+        };
+
+        fetch(process.env.BACKEND_URL + "/privada", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            setStore({ isActive: result.usuario.is_active });
+          })
+          .catch((error) => console.log("error", error));
       },
 
       getMessage: () => {

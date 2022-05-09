@@ -10,8 +10,6 @@ export const Login = () => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
-  useEffect(() => {}, [store.token]);
-
   if (!store.token) {
     return (
       <div className="text-center mt-5 d-flex justify-content-center">

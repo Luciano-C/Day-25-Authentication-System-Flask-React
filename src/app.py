@@ -89,10 +89,9 @@ def registrar_usuario():
 def iniciar_sesion():
     data = request.get_json()
     one_user = User.query.filter_by(email=data['email'], password=data['password']).first()
-    print(one_user)
     if one_user:
         expiracion = datetime.timedelta(minutes=1)
-        acceso = create_access_token(identity=one_user.email, expires_delta=expiracion)
+        acceso = create_access_token(identity={"email": one_user.email, "password": one_user.password, "is_active": one_user.is_active}, expires_delta=expiracion)
         response = {"token": acceso, "expiracion": expiracion.total_seconds(), "email": one_user.email}
         return jsonify(response)
     else:
