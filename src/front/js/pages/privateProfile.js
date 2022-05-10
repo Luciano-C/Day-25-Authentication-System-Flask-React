@@ -6,7 +6,6 @@ export const PrivateProfile = () => {
 
   useEffect(() => {
     actions.getUserData();
-    console.log(store, "hola hola");
   }, [store.isActive]);
 
   return (
