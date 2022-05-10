@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       currentPassword: "",
       isActive: "",
       token: "",
+      footerMessage: "",
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -33,8 +34,15 @@ const getState = ({ getStore, getActions, setStore }) => {
           .then((result) => {
             setStore({ token: result.token });
             console.log(store);
+            if (!store.token) {
+              setStore({ footerMessage: "Nombre y/o contraseña inválidos." });
+            } else {
+              setStore({ footerMessage: "" });
+            }
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log(error);
+          });
       },
 
       getUserData: () => {
@@ -54,6 +62,42 @@ const getState = ({ getStore, getActions, setStore }) => {
             setStore({ isActive: result.usuario.is_active });
           })
           .catch((error) => console.log("error", error));
+      },
+
+      registerHandler: (newEmail, newPassword) => {
+        setStore({ currentEmail: newEmail });
+        setStore({ currentPassword: newPassword });
+        let store = getStore();
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+          email: store.currentEmail,
+          password: store.currentPassword,
+          is_active: true,
+        });
+
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+
+        fetch(process.env.BACKEND_URL + "/registro", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(result);
+            setStore({ footerMessage: "" });
+          })
+          .catch((error) => {
+            console.log("error", error);
+            setStore({ footerMessage: "Email ya registrado." });
+          });
+      },
+
+      logOut: () => {
+        setStore({ token: "" });
       },
 
       getMessage: () => {

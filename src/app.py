@@ -83,7 +83,7 @@ def registrar_usuario():
 
     db.session.add(new_user)
     db.session.commit()
-    return "el registro se realizó satisfactoriamente"
+    return {"mensaje": "el registro se realizó satisfactoriamente"}
 
 @app.route('/login', methods=['POST'])
 def iniciar_sesion():

@@ -37,15 +37,17 @@ export const Login = () => {
               </div>
 
               <div className="d-flex justify-content-evenly">
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  onClick={() => {
-                    actions.loginHandler(emailInput, passwordInput);
-                  }}
-                >
-                  Sign In
-                </button>
+                <Link to="/">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      actions.registerHandler(emailInput, passwordInput);
+                    }}
+                  >
+                    Sign In
+                  </button>
+                </Link>
 
                 <Link to="/">
                   <button
